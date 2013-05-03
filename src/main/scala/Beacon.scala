@@ -1,3 +1,5 @@
+package dk.bestbrains.beacon
+
 import com.codeminders.hidapi.{ClassPathLibraryLoader, HIDManager}
 import dispatch._
 import Defaults._
@@ -32,10 +34,10 @@ object Beacon {
 
     try {
       while(true) {
-        val url2 = url("http://ci.bestbrains.dk/job/Working%20Now/api/json")
+        val url2 = url(args(0))
         val body = Http(url2 OK as.String)
         val parsed = parse(body()).extract[HudsonProject]
-        println("Color: " + parsed.color)
+        print("*")
 
         val newStucture = SET_STRUCTURE.clone()
         if(parsed.lastBuild.number != parsed.lastCompletedBuild.number) {
@@ -51,7 +53,7 @@ object Beacon {
         }
 
         device.sendFeatureReport(newStucture)
-        Thread.sleep(1000)
+        Thread.sleep(if(args.length > 1) augmentString(args(1)).toInt else 1000)
       }
     }
   }
