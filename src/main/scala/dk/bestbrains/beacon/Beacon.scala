@@ -25,15 +25,14 @@ object Beacon {
     ClassPathLibraryLoader.loadNativeHIDLibrary()
     val hid_mgr = HIDManager.getInstance()
 
-
     sys.ShutdownHookThread {
-      val hid_mgr = HIDManager.getInstance()
       val device = hid_mgr.openById(0x0fc5, 0xb080, null)
       val newStructure = SET_STRUCTURE.clone()
       newStructure.update(SET_BYTE, BLACK)
       device.sendFeatureReport(newStructure)
       device.close()
     }
+
     while(true) {
       val device = hid_mgr.openById(0x0fc5, 0xb080, null)
 
@@ -60,13 +59,9 @@ object Beacon {
           device.sendFeatureReport(newStructure)
           Thread.sleep(if(args.length > 1) augmentString(args(1)).toInt else 1000)
         }
-      }catch {
+      } catch {
         case ie: InterruptedException => {
-          val newStructure = SET_STRUCTURE.clone()
-          newStructure.update(SET_BYTE, BLACK)
-          device.sendFeatureReport(newStructure)
-          device.close()
-          break()
+          return
         }
         case e: Exception => {
           e.printStackTrace()
@@ -75,6 +70,8 @@ object Beacon {
           device.sendFeatureReport(newStructure)
           Thread.sleep(if(args.length > 1) augmentString(args(1)).toInt else 1000)
         }
+      } finally {
+        device.close()
       }
     }
   }
