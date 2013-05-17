@@ -37,26 +37,32 @@ object Beacon {
       val device = hid_mgr.openById(0x0fc5, 0xb080, null)
 
       try {
+        var old_color: String = ""
         while(true) {
           val url2 = url(args(0))
           val body = Http(url2 OK as.String)
           val parsed = parse(body()).extract[HudsonProject]
           print("*")
 
-          val newStructure = SET_STRUCTURE.clone()
-          if(parsed.color == "red") {
-            newStructure.update(SET_BYTE, RED)
-          } else if(parsed.color == "blue") {
-            newStructure.update(SET_BYTE, BLUE)
-          } else if(parsed.color == "red_anime") {
-            newStructure.update(SET_BYTE, PURPLE)
-          } else if(parsed.color == "blue_anime") {
-            newStructure.update(SET_BYTE, CYAN)
-          } else {
-            newStructure.update(SET_BYTE, WHITE)
+          if(parsed.color != old_color) {
+            val newStructure = SET_STRUCTURE.clone()
+
+            if(parsed.color == "red") {
+              newStructure.update(SET_BYTE, RED)
+            } else if(parsed.color == "blue") {
+              newStructure.update(SET_BYTE, BLUE)
+            } else if(parsed.color == "red_anime") {
+              newStructure.update(SET_BYTE, PURPLE)
+            } else if(parsed.color == "blue_anime") {
+              newStructure.update(SET_BYTE, CYAN)
+            } else {
+              newStructure.update(SET_BYTE, WHITE)
+            }
+
+            device.sendFeatureReport(newStructure)
+            old_color = parsed.color
           }
 
-          device.sendFeatureReport(newStructure)
           Thread.sleep(if(args.length > 1) augmentString(args(1)).toInt else 1000)
         }
       } catch {
