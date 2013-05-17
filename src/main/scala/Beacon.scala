@@ -39,22 +39,27 @@ object Beacon {
         val parsed = parse(body()).extract[HudsonProject]
         print("*")
 
-        val newStucture = SET_STRUCTURE.clone()
-        if(parsed.lastBuild.number != parsed.lastCompletedBuild.number) {
-          newStucture.update(SET_BYTE, YELLOW)
+        val newStructure = SET_STRUCTURE.clone()
+        if(parsed.color == "red") {
+          newStructure.update(SET_BYTE, RED)
+        } else if(parsed.color == "blue") {
+          newStructure.update(SET_BYTE, BLUE)
+        } else if(parsed.color == "red_anime") {
+          newStructure.update(SET_BYTE, PURPLE)
+        } else if(parsed.color == "blue_anime") {
+          newStructure.update(SET_BYTE, CYAN)
         } else {
-          if(parsed.color == "red") {
-            newStucture.update(SET_BYTE, RED)
-          } else if(parsed.color == "blue") {
-            newStucture.update(SET_BYTE, BLUE)
-          } else {
-            newStucture.update(SET_BYTE, WHITE)
-          }
+          newStructure.update(SET_BYTE, WHITE)
         }
 
-        device.sendFeatureReport(newStucture)
+        device.sendFeatureReport(newStructure)
         Thread.sleep(if(args.length > 1) augmentString(args(1)).toInt else 1000)
       }
+    } finally {
+      val newStructure = SET_STRUCTURE.clone()
+      newStructure.update(SET_BYTE, BLACK)
+      device.sendFeatureReport(newStructure)
+      device.close()
     }
   }
 }
