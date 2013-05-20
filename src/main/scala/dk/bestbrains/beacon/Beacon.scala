@@ -2,7 +2,6 @@ package dk.bestbrains.beacon
 
 import com.codeminders.hidapi.{ClassPathLibraryLoader, HIDManager}
 import dispatch._
-import Defaults._
 import net.liftweb.json._
 import scala.util.control.Breaks._
 
