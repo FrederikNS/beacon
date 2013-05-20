@@ -5,6 +5,7 @@ import dispatch._
 import net.liftweb.json._
 import scala.util.control.Breaks._
 
+
 object Beacon {
   implicit val formats = DefaultFormats
 
@@ -32,14 +33,18 @@ object Beacon {
       device.close()
     }
 
+    if(args.length < 1) {
+      println("Url needs to be specified in the first argument")
+      return
+    }
+
     while(true) {
       val device = hid_mgr.openById(0x0fc5, 0xb080, null)
 
       try {
         var old_color: String = ""
         while(true) {
-          val url2 = url(args(0))
-          val body = Http(url2 OK as.String)
+          val body = Http(url(args(0)) OK as.String)
           val parsed = parse(body()).extract[HudsonProject]
           print("*")
 
