@@ -27,6 +27,7 @@ object Beacon {
 
     sys.ShutdownHookThread {
       val device = hid_mgr.openById(0x0fc5, 0xb080, null)
+      if(device == null) return
       val newStructure = SET_STRUCTURE.clone()
       newStructure.update(SET_BYTE, BLACK)
       device.sendFeatureReport(newStructure)
@@ -38,9 +39,8 @@ object Beacon {
       return
     }
 
+    val device = hid_mgr.openById(0x0fc5, 0xb080, null)
     while(true) {
-      val device = hid_mgr.openById(0x0fc5, 0xb080, null)
-
       try {
         var old_color: String = ""
         while(true) {
