@@ -59,6 +59,10 @@ object Beacon {
               newStructure.update(SET_BYTE, PURPLE)
             } else if(parsed.color == "blue_anime") {
               newStructure.update(SET_BYTE, CYAN)
+            } else if(parsed.color == "green") {
+              newStructure.update(SET_BYTE, GREEN)
+            } else if(parsed.color == "green_anime") {
+              newStructure.update(SET_BYTE, YELLOW)
             } else {
               newStructure.update(SET_BYTE, WHITE)
             }
