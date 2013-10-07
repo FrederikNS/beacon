@@ -1,31 +1,5 @@
 package dk.bestbrains.beacon
 
-class HudsonProject(
-                     val actions: Array[Unit],
-                     val description: String,
-                     val displayName: String,
-                     val displayNameOrNull: String,
-                     val name: String,
-                     val url: String,
-                     val buildable: Boolean,
-                     val builds: Array[HudsonBuild],
-                     val color: String,
-                     val firstBuild: HudsonBuild,
-                     val healthReport: Array[HudsonHealthReport],
-                     val inQueue: Boolean,
-                     val keepDependencies: Boolean,
-                     val lastBuild: HudsonBuild,
-                     val lastCompletedBuild: HudsonBuild,
-                     val lastFailedBuild: HudsonBuild,
-                     val lastStableBuild: HudsonBuild,
-                     val lastSuccessfulBuild: HudsonBuild,
-                     val lastUnstableBuild: HudsonBuild,
-                     val lastUnsuccessfulBuild: HudsonBuild,
-                     val nextBuildNumber: Int,
-                     val property: Array[Unit],
-                     val queueItem: Unit,
-                     val concurrentBuild: Boolean,
-                     val downstreamProjects: Array[Unit],
-                     val scm: HudsonSCM,
-                     val upstreamProjects: Array[Unit]
-                     )
+class HudsonProject(val color: String, val lastBuild: HudsonBuild, val lastCompletedBuild: HudsonBuild) {
+
+}
