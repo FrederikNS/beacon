@@ -45,33 +45,34 @@ object Beacon {
         var old_color: String = ""
         while(true) {
           val body = Http(url(args(0)) OK as.String)
-          val parsed = parse(body()).extract[HudsonProject]
+          var parsed = parse(body()).extract[HudsonProject]
+          if(args.length ==3) {
+            val buildbody = Http(url(args(1)) OK as.String)
+            val testbody = Http(url(args(2)) OK as.String)
+
+            val build = parse(buildbody()).extract[HudsonProject]
+            val test = parse(testbody()).extract[HudsonProject]
+            var level = findLevel(parsed.color)
+            if(findLevel(build.color) > level) {
+              level = findLevel(build.color)
+              parsed = build
+            }
+            if(findLevel(test.color) > level) {
+              level = findLevel(test.color)
+              parsed = test
+            }
+          }
           print("*")
 
-          if(parsed.color != old_color) {
+            if(parsed.color != old_color) {
             val newStructure = SET_STRUCTURE.clone()
-
-            if(parsed.color == "red") {
-              newStructure.update(SET_BYTE, RED)
-            } else if(parsed.color == "blue") {
-              newStructure.update(SET_BYTE, BLUE)
-            } else if(parsed.color == "red_anime") {
-              newStructure.update(SET_BYTE, PURPLE)
-            } else if(parsed.color == "blue_anime") {
-              newStructure.update(SET_BYTE, CYAN)
-            } else if(parsed.color == "green") {
-              newStructure.update(SET_BYTE, GREEN)
-            } else if(parsed.color == "green_anime") {
-              newStructure.update(SET_BYTE, YELLOW)
-            } else {
-              newStructure.update(SET_BYTE, WHITE)
-            }
+            matchTest(parsed.color, newStructure)
 
             device.sendFeatureReport(newStructure)
             old_color = parsed.color
           }
 
-          Thread.sleep(if(args.length > 1) augmentString(args(1)).toInt else 1000)
+          Thread.sleep(if(args.length == 2) augmentString(args(1)).toInt else 1000)
         }
       } catch {
         case ie: InterruptedException => {
@@ -82,11 +83,31 @@ object Beacon {
           val newStructure = SET_STRUCTURE.clone()
           newStructure.update(SET_BYTE, WHITE)
           device.sendFeatureReport(newStructure)
-          Thread.sleep(if(args.length > 1) augmentString(args(1)).toInt else 1000)
+          Thread.sleep(if(args.length == 2) augmentString(args(1)).toInt else 1000)
         }
       } finally {
         device.close()
       }
     }
+  }
+
+  def findLevel(color: Any): Int = color match {
+      case "red" => 1
+      case "blue" => 0
+      case "red_anime" => 2
+      case "blue_anime" => 2
+      case "green" => 0
+      case "green_anime" => 2
+      case _ => 2
+  }
+
+  def matchTest(color: Any, newStructure: Array[Byte]): Any = color match {
+    case "red" => newStructure.update(SET_BYTE, RED)
+      case "blue" => newStructure.update(SET_BYTE, BLUE)
+      case "red_anime" => newStructure.update(SET_BYTE, PURPLE)
+      case "blue_anime" => newStructure.update(SET_BYTE, CYAN)
+      case "green" => newStructure.update(SET_BYTE, GREEN)
+      case "green_anime" => newStructure.update(SET_BYTE, YELLOW)
+      case _ => newStructure.update(SET_BYTE, WHITE)
   }
 }
