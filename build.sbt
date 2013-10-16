@@ -2,7 +2,7 @@ import AssemblyKeys._ // put this at the top of the file
 
 name := "Beacon"
 
-version := "0.4"
+version := "0.5"
 
 scalaVersion := "2.10.1"
 
